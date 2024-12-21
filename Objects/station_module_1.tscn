@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://bwk0krvl0wqbg"]
+
+[ext_resource type="Texture2D" uid="uid://cyna4wubsrgoa" path="res://Textures/Station Module 1.png" id="1_6xu8x"]
+[ext_resource type="Script" path="res://Scripts/StationModule1.gd" id="2_3ahfu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lkvb4"]
+size = Vector2(176, 80)
+
+[node name="PioneerModule1" type="Node2D"]
+
+[node name="StationModule1" type="Sprite2D" parent="."]
+position = Vector2(528, 224)
+texture = ExtResource("1_6xu8x")
+script = ExtResource("2_3ahfu")
+
+[node name="damagedTimer" type="Timer" parent="StationModule1"]
+
+[node name="CollisionHolder" type="Area2D" parent="."]
+
+[node name="hitBox" type="CollisionShape2D" parent="CollisionHolder"]
+position = Vector2(528, 224)
+shape = SubResource("RectangleShape2D_lkvb4")

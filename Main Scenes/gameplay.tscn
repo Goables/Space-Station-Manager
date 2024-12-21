@@ -1,0 +1,65 @@
+[gd_scene load_steps=8 format=3 uid="uid://b41k07tvjoi74"]
+
+[ext_resource type="Script" path="res://Scripts/Camera2D.gd" id="1_0noap"]
+[ext_resource type="PackedScene" uid="uid://bwk0krvl0wqbg" path="res://Objects/station_module_1.tscn" id="1_xhrdg"]
+[ext_resource type="Texture2D" uid="uid://dn6xdgfns1p4j" path="res://Textures/BackgroundBlank.png" id="2_f3om0"]
+[ext_resource type="Script" path="res://Scripts/SpaceBackground.gd" id="3_7tjr3"]
+[ext_resource type="Texture2D" uid="uid://do3xvlord07v0" path="res://Textures/BadStars.png" id="3_w3l3r"]
+[ext_resource type="PackedScene" uid="uid://c7sn4u85xdtn1" path="res://UI/menu_panel.tscn" id="7_5bs4j"]
+[ext_resource type="AudioStream" uid="uid://clppivg33uq5m" path="res://Music/Waycrest.wav" id="7_fimtg"]
+
+[node name="Gameplay" type="Node2D"]
+
+[node name="Station" type="Node" parent="."]
+
+[node name="PioneerModule1" parent="Station" instance=ExtResource("1_xhrdg")]
+unique_name_in_owner = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(576, 320)
+limit_left = -2000
+limit_top = -1000
+limit_right = 2000
+limit_bottom = 1000
+script = ExtResource("1_0noap")
+
+[node name="SpaceBackground" type="ParallaxBackground" parent="."]
+script = ExtResource("3_7tjr3")
+
+[node name="SpaceLayer" type="ParallaxLayer" parent="SpaceBackground"]
+unique_name_in_owner = true
+
+[node name="Space" type="TextureRect" parent="SpaceBackground/SpaceLayer"]
+offset_left = -4272.0
+offset_top = -2464.0
+offset_right = 4352.0
+offset_bottom = 1952.0
+texture = ExtResource("2_f3om0")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="StarsLayer" type="ParallaxLayer" parent="SpaceBackground"]
+unique_name_in_owner = true
+position = Vector2(-8, 32)
+scale = Vector2(1.84, 1.72)
+motion_mirroring = Vector2(1150, 656)
+
+[node name="Stars" type="TextureRect" parent="SpaceBackground/StarsLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+texture = ExtResource("3_w3l3r")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MenuPanel" parent="CanvasLayer" instance=ExtResource("7_5bs4j")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_fimtg")
+autoplay = true
+bus = &"Music"
