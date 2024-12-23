@@ -1,46 +1,52 @@
-[gd_scene load_steps=9 format=3 uid="uid://c7sn4u85xdtn1"]
+[gd_scene load_steps=11 format=3 uid="uid://c7sn4u85xdtn1"]
 
 [ext_resource type="Script" path="res://Scripts/UtilityPanel.gd" id="2_rygu7"]
+[ext_resource type="Texture2D" uid="uid://bcbgmjy8mteis" path="res://Textures/Build Mode Icon.png" id="2_yoxjl"]
 [ext_resource type="Texture2D" uid="uid://d2xur6wembbym" path="res://Textures/OxygenDial_noArrow.png" id="3_4d7w1"]
 [ext_resource type="Texture2D" uid="uid://bxxv87oukm70j" path="res://Textures/OxygenDial_Arrow.png" id="4_hkjey"]
 [ext_resource type="Script" path="res://Scripts/OxygenDial.gd" id="5_18clv"]
 [ext_resource type="Texture2D" uid="uid://bxxu3ifycy0qr" path="res://Textures/OxygenDial_ArrowCap.png" id="6_01jit"]
 [ext_resource type="Texture2D" uid="uid://cexmt5qmgioir" path="res://Textures/CO2Dial.png" id="7_h1ufq"]
 [ext_resource type="Script" path="res://Scripts/CO2Arrow.gd" id="8_k2m8a"]
+[ext_resource type="Script" path="res://Scripts/DateLabelScript.gd" id="9_4po8s"]
 [ext_resource type="FontFile" uid="uid://brsai08ijo7q6" path="res://Effects/Fonts/Tiny5/Tiny5-Regular.ttf" id="10_2u70n"]
 
 [node name="MenuPanel" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
 mouse_filter = 2
 
-[node name="TabBar" type="TabBar" parent="."]
+[node name="DateLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 160.0
-offset_right = 410.0
-offset_bottom = 40.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 112.0
+offset_bottom = 26.0
+scale = Vector2(1.8, 1.8)
 theme_override_fonts/font = ExtResource("10_2u70n")
-theme_override_font_sizes/font_size = 25
-tab_count = 2
-current_tab = 1
-clip_tabs = false
-scrolling_enabled = false
-tabs_rearrange_group = 0
-scroll_to_selected = false
-tab_0/title = "Settings"
-tab_1/title = "Utilities"
+text = "Jan. 1, 2002"
+script = ExtResource("9_4po8s")
+
+[node name="dateTimer" type="Timer" parent="DateLabel"]
+wait_time = 240.0
+autostart = true
 
 [node name="Panel" type="Panel" parent="."]
 visible = false
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 offset_left = 320.0
 offset_top = 128.0
 offset_right = 832.0
 offset_bottom = 512.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 script = ExtResource("2_rygu7")
 
 [node name="UtilityTabBar" type="TabBar" parent="Panel"]
@@ -62,28 +68,41 @@ tab_4/title = "Power"
 tab_5/title = "Launch"
 
 [node name="OverviewPanel" type="Panel" parent="Panel"]
-visible = false
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 384.0
 
+[node name="SpeedLabel" type="Label" parent="Panel/OverviewPanel"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 24.0
+offset_right = 176.0
+offset_bottom = 64.0
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Station Speed:"
+
+[node name="OrbitsLabel" type="Label" parent="Panel/OverviewPanel"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 104.0
+offset_right = 176.0
+offset_bottom = 144.0
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Orbits Completed:"
+
 [node name="AtmospherePanel" type="Panel" parent="Panel"]
 visible = false
-layout_mode = 0
+layout_mode = 1
 offset_right = 512.0
 offset_bottom = 384.0
 
 [node name="BackPanel" type="TextureRect" parent="Panel/AtmospherePanel"]
 top_level = true
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -464.0
-offset_top = 152.0
-offset_right = -336.0
-offset_bottom = 280.0
-grow_horizontal = 0
+offset_left = 688.0
+offset_top = 160.0
+offset_right = 816.0
+offset_bottom = 288.0
 texture = ExtResource("3_4d7w1")
 
 [node name="Arrow" type="TextureRect" parent="Panel/AtmospherePanel/BackPanel"]
@@ -104,14 +123,10 @@ texture = ExtResource("6_01jit")
 [node name="CO2BackPanel" type="TextureRect" parent="Panel/AtmospherePanel"]
 top_level = true
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -464.0
+offset_left = 688.0
 offset_top = 336.0
-offset_right = -336.0
+offset_right = 816.0
 offset_bottom = 464.0
-grow_horizontal = 0
 texture = ExtResource("7_h1ufq")
 
 [node name="Arrow" type="TextureRect" parent="Panel/AtmospherePanel/CO2BackPanel"]
@@ -131,57 +146,123 @@ texture = ExtResource("6_01jit")
 
 [node name="OxygenLabel" type="Label" parent="Panel/AtmospherePanel"]
 layout_mode = 0
-offset_left = 248.0
-offset_top = 32.0
-offset_right = 360.0
-offset_bottom = 64.0
+offset_left = 224.0
+offset_top = 24.0
+offset_right = 280.0
+offset_bottom = 42.0
+scale = Vector2(1.8, 1.8)
 theme_override_fonts/font = ExtResource("10_2u70n")
-theme_override_font_sizes/font_size = 25
 text = "OXYGEN"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="OxygenStats" type="Label" parent="Panel/AtmospherePanel"]
+[node name="OxygenStats" type="RichTextLabel" parent="Panel/AtmospherePanel"]
 layout_mode = 0
-offset_left = 256.0
+offset_left = 168.0
 offset_top = 72.0
 offset_right = 360.0
-offset_bottom = 144.0
-theme_override_fonts/font = ExtResource("10_2u70n")
-theme_override_font_sizes/font_size = 12
-text = "rats"
-autowrap_mode = 3
-uppercase = true
+offset_bottom = 176.0
+theme_override_fonts/normal_font = ExtResource("10_2u70n")
+bbcode_enabled = true
+text = "Rats"
 
 [node name="CO2Label" type="Label" parent="Panel/AtmospherePanel"]
 layout_mode = 0
-offset_left = 248.0
-offset_top = 216.0
-offset_right = 360.0
-offset_bottom = 248.0
+offset_left = 208.0
+offset_top = 208.0
+offset_right = 280.0
+offset_bottom = 226.0
+scale = Vector2(1.8, 1.8)
 theme_override_fonts/font = ExtResource("10_2u70n")
-theme_override_font_sizes/font_size = 25
 text = "CO2"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="CO2Stats" type="Label" parent="Panel/AtmospherePanel"]
+[node name="CO2Stats" type="RichTextLabel" parent="Panel/AtmospherePanel"]
 layout_mode = 0
-offset_left = 256.0
+offset_left = 168.0
 offset_top = 256.0
 offset_right = 360.0
-offset_bottom = 328.0
-theme_override_fonts/font = ExtResource("10_2u70n")
-theme_override_font_sizes/font_size = 12
+offset_bottom = 360.0
+theme_override_fonts/normal_font = ExtResource("10_2u70n")
+bbcode_enabled = true
 text = "rats"
-autowrap_mode = 3
-uppercase = true
 
 [node name="SupplyPanel" type="Panel" parent="Panel"]
 visible = false
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 384.0
+
+[node name="ItemList" type="VBoxContainer" parent="Panel/SupplyPanel"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 64.0
+offset_right = 192.0
+offset_bottom = 320.0
+
+[node name="FoodButton" type="Button" parent="Panel/SupplyPanel/ItemList" groups=["SupplyListButtonGroup"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Food: 0"
+
+[node name="WaterButton" type="Button" parent="Panel/SupplyPanel/ItemList" groups=["SupplyListButtonGroup"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Water: 0"
+
+[node name="WasteButton" type="Button" parent="Panel/SupplyPanel/ItemList" groups=["SupplyListButtonGroup"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Waste: 0"
+
+[node name="FuelButton" type="Button" parent="Panel/SupplyPanel/ItemList" groups=["SupplyListButtonGroup"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Fuel: 0"
+
+[node name="ToolsButton" type="Button" parent="Panel/SupplyPanel/ItemList" groups=["SupplyListButtonGroup"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Tools: 0"
+
+[node name="ScienceButton" type="Button" parent="Panel/SupplyPanel/ItemList" groups=["SupplyListButtonGroup"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Sci. Equip.: 0"
+
+[node name="ListLabel" type="Label" parent="Panel/SupplyPanel"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 32.0
+offset_right = 192.0
+offset_bottom = 56.0
+theme_override_fonts/font = ExtResource("10_2u70n")
+text = "Supplies"
+horizontal_alignment = 1
+
+[node name="ItemLabel" type="Label" parent="Panel/SupplyPanel"]
+layout_mode = 0
+offset_left = 224.0
+offset_top = 32.0
+offset_right = 354.0
+offset_bottom = 50.0
+theme_override_fonts/font = ExtResource("10_2u70n")
+
+[node name="ItemDescLabel" type="Label" parent="Panel/SupplyPanel"]
+layout_mode = 0
+offset_left = 216.0
+offset_top = 64.0
+offset_right = 376.0
+offset_bottom = 192.0
+theme_override_fonts/font = ExtResource("10_2u70n")
+autowrap_mode = 3
 
 [node name="CrewPanel" type="Panel" parent="Panel"]
 visible = false
@@ -201,7 +282,36 @@ layout_mode = 0
 offset_right = 512.0
 offset_bottom = 384.0
 
-[connection signal="tab_clicked" from="TabBar" to="Panel" method="_on_tab_bar_tab_clicked"]
+[node name="TabBar" type="TabBar" parent="."]
+texture_filter = 5
+layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 200.0
+offset_right = 533.0
+offset_bottom = 72.0
+scale = Vector2(0.7, 0.7)
+theme_override_fonts/font = ExtResource("10_2u70n")
+theme_override_font_sizes/font_size = 25
+tab_count = 3
+current_tab = 1
+tab_alignment = 1
+scrolling_enabled = false
+tabs_rearrange_group = 0
+scroll_to_selected = false
+tab_0/title = "Settings"
+tab_1/title = "Utilities"
+tab_2/title = ""
+tab_2/icon = ExtResource("2_yoxjl")
+
+[connection signal="timeout" from="DateLabel/dateTimer" to="DateLabel" method="_on_date_timer_timeout"]
 [connection signal="tab_clicked" from="Panel/UtilityTabBar" to="Panel" method="_on_utility_tab_bar_tab_clicked"]
 [connection signal="visibility_changed" from="Panel/AtmospherePanel/OxygenStats" to="Panel" method="_on_oxygen_stats_visibility_changed"]
 [connection signal="visibility_changed" from="Panel/AtmospherePanel/CO2Stats" to="Panel" method="_on_oxygen_stats_visibility_changed"]
+[connection signal="pressed" from="Panel/SupplyPanel/ItemList/FoodButton" to="Panel" method="_on_food_button_pressed"]
+[connection signal="pressed" from="Panel/SupplyPanel/ItemList/WaterButton" to="Panel" method="_on_water_button_pressed"]
+[connection signal="pressed" from="Panel/SupplyPanel/ItemList/WasteButton" to="Panel" method="_on_waste_button_pressed"]
+[connection signal="pressed" from="Panel/SupplyPanel/ItemList/FuelButton" to="Panel" method="_on_fuel_button_pressed"]
+[connection signal="pressed" from="Panel/SupplyPanel/ItemList/ToolsButton" to="Panel" method="_on_tools_button_pressed"]
+[connection signal="pressed" from="Panel/SupplyPanel/ItemList/ScienceButton" to="Panel" method="_on_science_button_pressed"]
+[connection signal="tab_clicked" from="TabBar" to="Panel" method="_on_tab_bar_tab_clicked"]

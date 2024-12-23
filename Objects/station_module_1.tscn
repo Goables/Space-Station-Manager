@@ -1,22 +1,82 @@
-[gd_scene load_steps=4 format=3 uid="uid://bwk0krvl0wqbg"]
+[gd_scene load_steps=6 format=3 uid="uid://bwk0krvl0wqbg"]
 
 [ext_resource type="Texture2D" uid="uid://cyna4wubsrgoa" path="res://Textures/Station Module 1.png" id="1_6xu8x"]
 [ext_resource type="Script" path="res://Scripts/StationModule1.gd" id="2_3ahfu"]
+[ext_resource type="Texture2D" uid="uid://b0ain611op15o" path="res://Textures/SnapBall.png" id="3_2ejfj"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lkvb4"]
 size = Vector2(176, 80)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kchsg"]
+size = Vector2(1.04835, 1.7818)
+
 [node name="PioneerModule1" type="Node2D"]
 
-[node name="StationModule1" type="Sprite2D" parent="."]
-position = Vector2(528, 224)
+[node name="StationModule" type="Sprite2D" parent="."]
 texture = ExtResource("1_6xu8x")
 script = ExtResource("2_3ahfu")
 
-[node name="damagedTimer" type="Timer" parent="StationModule1"]
+[node name="damagedTimer" type="Timer" parent="StationModule"]
+
+[node name="updateTimer" type="Timer" parent="StationModule"]
+wait_time = 20.0
+autostart = true
 
 [node name="CollisionHolder" type="Area2D" parent="."]
 
 [node name="hitBox" type="CollisionShape2D" parent="CollisionHolder"]
-position = Vector2(528, 224)
 shape = SubResource("RectangleShape2D_lkvb4")
+
+[node name="ConnectLeft" type="Area2D" parent="."]
+position = Vector2(-97.483, 0)
+collision_layer = 2
+collision_mask = 2
+
+[node name="ConnectBox" type="CollisionShape2D" parent="ConnectLeft"]
+position = Vector2(1.05653, -0.0250378)
+shape = SubResource("RectangleShape2D_kchsg")
+debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
+
+[node name="SnapBall" type="TextureRect" parent="ConnectLeft"]
+visible = false
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_2ejfj")
+
+[node name="ConnectRight" type="Area2D" parent="."]
+position = Vector2(91.222, 0)
+collision_layer = 2
+collision_mask = 2
+
+[node name="SnapBall" type="TextureRect" parent="ConnectRight"]
+visible = false
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -5.66348
+offset_top = -7.51092
+offset_right = 26.3365
+offset_bottom = 24.4891
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_2ejfj")
+
+[node name="ConnectBox2" type="CollisionShape2D" parent="ConnectRight"]
+position = Vector2(-0.371002, 0.0957928)
+shape = SubResource("RectangleShape2D_kchsg")
+debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
+
+[connection signal="timeout" from="StationModule/updateTimer" to="StationModule" method="_on_update_timer_timeout"]
+[connection signal="area_entered" from="ConnectLeft" to="StationModule" method="_on_connect_left_area_entered"]
+[connection signal="area_entered" from="ConnectRight" to="StationModule" method="_on_connect_right_area_entered"]

@@ -4,9 +4,3 @@
 
 [node name="Global" type="Node"]
 script = ExtResource("1_kbuli")
-
-[node name="OxygenDecreaseTimer" type="Timer" parent="."]
-wait_time = 5.0
-autostart = true
-
-[connection signal="timeout" from="OxygenDecreaseTimer" to="." method="_on_oxygen_decrease_timer_timeout"]

@@ -1,0 +1,113 @@
+[gd_scene load_steps=9 format=3 uid="uid://bl4dwoaks2ujc"]
+
+[ext_resource type="Texture2D" uid="uid://dr01g5wjxet0t" path="res://Textures/BuildModeBottomBar.png" id="1_dt42w"]
+[ext_resource type="Script" path="res://Scripts/BuildModeScript.gd" id="1_vc134"]
+[ext_resource type="FontFile" uid="uid://brsai08ijo7q6" path="res://Effects/Fonts/Tiny5/Tiny5-Regular.ttf" id="2_mfhfw"]
+[ext_resource type="Texture2D" uid="uid://dcyir6wcdixo7" path="res://Textures/PMAButton.png" id="3_u2v2u"]
+[ext_resource type="Texture2D" uid="uid://dujal7abary5t" path="res://Textures/PMAButton_Clicked.png" id="4_2ekde"]
+[ext_resource type="Texture2D" uid="uid://cjljtthudt2jk" path="res://Textures/Station Module 1 Button.png" id="6_tc7js"]
+[ext_resource type="Texture2D" uid="uid://c4l77246nbqqj" path="res://Textures/Station Module 1 Button Pressed.png" id="7_q4m7j"]
+
+[sub_resource type="FontVariation" id="FontVariation_a85ub"]
+base_font = ExtResource("2_mfhfw")
+
+[node name="BuildModeMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BottomPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 520.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vc134")
+
+[node name="TextureRect" type="TextureRect" parent="BottomPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_dt42w")
+expand_mode = 2
+
+[node name="CategoryList" type="Control" parent="BottomPanel"]
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 160.0
+offset_bottom = 120.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="BottomPanel/CategoryList"]
+layout_mode = 2
+offset_left = 8.0
+offset_top = 2.0
+offset_right = 152.0
+offset_bottom = 106.0
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BottomPanel/CategoryList/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CouplingButton" type="Button" parent="BottomPanel/CategoryList/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_a85ub")
+text = "Coupling"
+
+[node name="StorageButton" type="Button" parent="BottomPanel/CategoryList/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_a85ub")
+text = "Storage"
+
+[node name="HabitationButton" type="Button" parent="BottomPanel/CategoryList/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_a85ub")
+text = "Habitation"
+
+[node name="ItemsList" type="Control" parent="BottomPanel"]
+anchors_preset = 0
+offset_left = 192.0
+offset_top = 8.0
+offset_right = 1136.0
+offset_bottom = 120.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="BottomPanel/ItemsList"]
+layout_mode = 0
+offset_right = 952.0
+offset_bottom = 112.0
+vertical_scroll_mode = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BottomPanel/ItemsList/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 6
+
+[node name="PMAButton" type="TextureButton" parent="BottomPanel/ItemsList/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture_normal = ExtResource("3_u2v2u")
+texture_pressed = ExtResource("4_2ekde")
+stretch_mode = 1
+
+[node name="PioneerButton" type="TextureButton" parent="BottomPanel/ItemsList/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture_normal = ExtResource("6_tc7js")
+texture_pressed = ExtResource("7_q4m7j")
+stretch_mode = 1
+
+[connection signal="building" from="BottomPanel" to="BottomPanel" method="_on_building"]
+[connection signal="pressed" from="BottomPanel/ItemsList/ScrollContainer/HBoxContainer/PMAButton" to="BottomPanel" method="_on_pma_button_pressed"]
+[connection signal="pressed" from="BottomPanel/ItemsList/ScrollContainer/HBoxContainer/PioneerButton" to="BottomPanel" method="_on_pioneer_button_pressed"]
