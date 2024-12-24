@@ -110,284 +110,112 @@ func reset_snap_variables() -> void:
 	isSnapped = false  # Reset the overall snap status
 
 # ---------------- DOCKING ---------------- #
-func can_connect_to_module(node_name: String) -> bool:
+func can_connect_to_module(node_name) -> bool:
 	for forbidden_node in forbidden_connect_nodes:
 		# Check if the node name begins with any of the forbidden node names
 		if node_name.begins_with(forbidden_node):
 			return false
 	return true
 
+func can_dock_to_module(area, source) -> bool:
+	var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
+	var module_orientation = fmod(area.get_parent().rotation_degrees, 360.0)
+	print(pma_orientation)
+	print(module_orientation)
+	print(module_orientation+pma_orientation)
+	var equation = pma_orientation + module_orientation
+	if source == "left":
+		if area.name == "ConnectLeft":
+			if equation == 180 or equation == 360:
+				if module_orientation-180 == pma_orientation or module_orientation+180 == pma_orientation:
+					return true
+				else:
+					return false
+			return false
+	elif source == "right":
+		if area.name == "ConnectRight":
+			if equation == 180 or equation == 360:
+				if module_orientation-180 == pma_orientation or module_orientation+180 == pma_orientation:
+					return true
+				else:
+					return false
+			return false
+	return true
+
 func _on_connect_left_area_entered(area):
 	if self.get_parent() == Global.ITEM_HELD:
-		if can_connect_to_module(area.get_parent().name):
-			if holdingShift == true and not isSnapped:
-				# Convert positions to world space
-				var parent_position = self.get_parent().global_position
-				var area_parent_position = area.get_parent().global_position
-				CONNECT_LEFT = area_parent_position
-				connected_modules["left"] = area.get_parent()
+		if can_connect_to_module(area.get_parent().name) and can_dock_to_module(area, "left"):
+			if not area.name == leftSnapBall.get_parent().name:
+				if holdingShift == true and not isSnapped:
+					# Convert positions to world space
+					var parent_position = self.get_parent().global_position
+					var area_parent_position = area.get_parent().global_position
+					CONNECT_LEFT = area.global_position
+					#CONNECT_RIGHT += area.get_parent()
+					connected_modules["left"] = area.get_parent()
 
-				# Get the PMA and module orientations
-				var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
-				var module_orientation = fmod(area.get_parent().rotation_degrees, 360.0)
+					# Get the PMA and module orientations
+					var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
+					var module_orientation = fmod(area.get_parent().rotation_degrees, 360.0)
 
-				# Calculate local offset for the connecting area
-				var local_offset = Vector2(area.position.x * 2.0, area.position.y * 2.0)
+					# Calculate local offset for the connecting area
+					var local_offset = Vector2(area.position.x, area.position.y)
 
-				# Rotate the local offset based on the PMA's rotation
-				var rotated_offset = local_offset.rotated(deg_to_rad(pma_orientation))
-				print("left")
-				if area.get_parent().name.begins_with("PioneerModule"):
-					# Adjust offset based on the module's orientation and PMA's orientation
-					if module_orientation == 0:
-						if pma_orientation == 0:
-							CONNECT_LEFT.x += rotated_offset.x*1.04
-							CONNECT_LEFT.y -= rotated_offset.y
-						elif pma_orientation == 90:
-							CONNECT_LEFT = null
-							return
-						elif pma_orientation == 180:
-							CONNECT_LEFT.x -= rotated_offset.x*0.99
-							CONNECT_LEFT.y += rotated_offset.y
-						elif pma_orientation == 270:
-							CONNECT_LEFT = null
-							return
-					elif module_orientation == 90:
-						if pma_orientation == 0:
-							CONNECT_LEFT = null
-							return
-						elif pma_orientation == 90:
-							CONNECT_LEFT.x += rotated_offset.x
-							CONNECT_LEFT.y += rotated_offset.y*1.04
-						elif pma_orientation == 180:
-							CONNECT_LEFT = null
-							return
-						elif pma_orientation == 270:
-							CONNECT_LEFT.x += rotated_offset.x
-							CONNECT_LEFT.y -= rotated_offset.y*0.99
-					elif module_orientation == 180:
-						if pma_orientation == 0:
-							CONNECT_LEFT.x -= rotated_offset.x*0.99
-							CONNECT_LEFT.y += rotated_offset.y
-						elif pma_orientation == 90:
-							CONNECT_LEFT = null
-							return
-						elif pma_orientation == 180:
-							CONNECT_LEFT.x += rotated_offset.x*1.04
-							CONNECT_LEFT.y += rotated_offset.y
-						elif pma_orientation == 270:
-							CONNECT_LEFT = null
-							return
-					elif module_orientation == 270:
-						if pma_orientation == 0:
-							CONNECT_LEFT = null
-							return
-						elif pma_orientation == 90:
-							CONNECT_LEFT.x -= rotated_offset.x
-							CONNECT_LEFT.y -= rotated_offset.y*0.99
-						elif pma_orientation == 180:
-							CONNECT_LEFT = null
-							return
-						elif pma_orientation == 270:
-							CONNECT_LEFT.x -= rotated_offset.x
-							CONNECT_LEFT.y += rotated_offset.y*1.04
-				elif area.get_parent().name.begins_with("CollaborationModule"):
-					if module_orientation == 0:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 90:
-								CONNECT_LEFT.x -= rotated_offset.x*0.22
-								CONNECT_LEFT.y += rotated_offset.y*3.78
-							elif pma_orientation == 270:
-								CONNECT_LEFT.x -= rotated_offset.x*0.21
-								CONNECT_LEFT.y += rotated_offset.y*3.78
-						elif area.name == "ConnectLeft" or area.name == "ConnectRight":
-							if pma_orientation == 0:
-								CONNECT_LEFT.x += rotated_offset.x*1.12
-								CONNECT_LEFT.y -= rotated_offset.y
-							elif pma_orientation == 180:
-								CONNECT_LEFT.x -= rotated_offset.x*1.12
-								CONNECT_LEFT.y += rotated_offset.y
-					elif module_orientation == 90:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 0:
-								CONNECT_LEFT.x += rotated_offset.x*3.7
-								CONNECT_LEFT.y -= rotated_offset.y*0.21
-							elif pma_orientation == 180:
-								CONNECT_LEFT.x += rotated_offset.x*3.7
-								CONNECT_LEFT.y -= rotated_offset.y*0.21
-						elif area.name == "ConnectLeft" or area.name == "ConnectRight":
-							if pma_orientation == 90:
-								CONNECT_LEFT.x += rotated_offset.x
-								CONNECT_LEFT.y += rotated_offset.y*1.12
-							elif pma_orientation == 270:
-								CONNECT_LEFT.x += rotated_offset.x
-								CONNECT_LEFT.y -= rotated_offset.y*1.12
-					elif module_orientation == 180:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 90:
-								CONNECT_LEFT.x -= rotated_offset.x*0.21
-								CONNECT_LEFT.y += rotated_offset.y*3.7
-							elif pma_orientation == 270:
-								CONNECT_LEFT.x -= rotated_offset.x*0.21
-								CONNECT_LEFT.y += rotated_offset.y*3.7
-						elif area.name == "ConnectLeft" or area.name == "ConnectRight":
-							if pma_orientation == 0:
-								CONNECT_LEFT.x -= rotated_offset.x*1.1
-								CONNECT_LEFT.y += rotated_offset.y
-							elif pma_orientation == 180:
-								CONNECT_LEFT.x += rotated_offset.x*1.12
-								CONNECT_LEFT.y += rotated_offset.y
-					elif module_orientation == 270:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 0:
-								CONNECT_LEFT.x += rotated_offset.x*3.68
-								CONNECT_LEFT.y -= rotated_offset.y*0.22
-							elif pma_orientation == 180:
-								CONNECT_LEFT.x += rotated_offset.x*3.65
-								CONNECT_LEFT.y -= rotated_offset.y*0.21
-						elif area.name == "ConnectRight" or area.name == "ConnectLeft":
-							if pma_orientation == 90:
-								CONNECT_LEFT.x -= rotated_offset.x
-								CONNECT_LEFT.y -= rotated_offset.y*1.12
-							elif pma_orientation == 270:
-								CONNECT_LEFT.x -= rotated_offset.x
-								CONNECT_LEFT.y += rotated_offset.y*1.11
+					# Rotate the local offset based on the PMA's rotation
+					var rotated_offset = local_offset.rotated(deg_to_rad(pma_orientation))
+					print(pma_orientation)
+					if pma_orientation == 0:
+						CONNECT_LEFT.y += 0
+						CONNECT_LEFT.x += 94
+					elif pma_orientation == 90:
+						CONNECT_LEFT.y += 94
+						CONNECT_LEFT.x += 0
+					elif pma_orientation == 180:
+						CONNECT_LEFT.y += 0
+						CONNECT_LEFT.x -= 94
+					elif pma_orientation == 270:
+						CONNECT_LEFT.y -= 94
+						CONNECT_LEFT.x += 0
+					print("left")
+				return
 
 func _on_connect_right_area_entered(area):
 	if self.get_parent() == Global.ITEM_HELD:
-		if can_connect_to_module(area.get_parent().name):
-			if holdingShift == true and not isSnapped:
-				# Convert positions to world space
-				var parent_position = self.get_parent().global_position
-				var area_parent_position = area.get_parent().global_position
-				CONNECT_RIGHT = area_parent_position
-				connected_modules["right"] = area.get_parent()
+		if can_connect_to_module(area.get_parent().name) and can_dock_to_module(area, "right"):
+			if not area.name == rightSnapBall.get_parent().name:
+				if holdingShift == true and not isSnapped:
+					# Convert positions to world space
+					var parent_position = self.get_parent().global_position
+					var area_parent_position = area.get_parent().global_position
+					CONNECT_RIGHT = area.global_position
+					#CONNECT_RIGHT += area.get_parent()
+					connected_modules["right"] = area.get_parent()
 
-				# Get the PMA and module orientations
-				var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
-				var module_orientation = fmod(area.get_parent().rotation_degrees, 360.0)
+					# Get the PMA and module orientations
+					var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
+					var module_orientation = fmod(area.get_parent().rotation_degrees, 360.0)
 
-				# Calculate local offset for the connecting area
-				var local_offset = Vector2(area.position.x * 2.0, area.position.y * 2.0)
+					# Calculate local offset for the connecting area
+					var local_offset = Vector2(area.position.x, area.position.y)
 
-				# Rotate the local offset based on the PMA's rotation
-				var rotated_offset = local_offset.rotated(deg_to_rad(pma_orientation))
-				print("right")
-				if area.get_parent().name == "PioneerModule":
-					# Adjust offset based on the module's orientation and PMA's orientation for the right side
-					if module_orientation == 0:
-						if pma_orientation == 0:
-							CONNECT_RIGHT.x += rotated_offset.x*0.97
-							CONNECT_RIGHT.y -= rotated_offset.y
-						elif pma_orientation == 90:
-							CONNECT_RIGHT = null
-							return
-						elif pma_orientation == 180:
-							CONNECT_RIGHT.x -= rotated_offset.x*1.03
-							CONNECT_RIGHT.y -= rotated_offset.y
-						elif pma_orientation == 270:
-							CONNECT_RIGHT = null
-							return
-					elif module_orientation == 90:
-						if pma_orientation == 0:
-							CONNECT_RIGHT = null
-							return
-						elif pma_orientation == 90:
-							CONNECT_RIGHT.x -= rotated_offset.x
-							CONNECT_RIGHT.y += rotated_offset.y*0.97
-						elif pma_orientation == 180:
-							CONNECT_RIGHT = null
-							return
-						elif pma_orientation == 270:
-							CONNECT_RIGHT.x -= rotated_offset.x
-							CONNECT_RIGHT.y -= rotated_offset.y*1.03
-					elif module_orientation == 180:
-						if pma_orientation == 0:
-							CONNECT_RIGHT.x -= rotated_offset.x*1.03
-							CONNECT_RIGHT.y -= rotated_offset.y
-						elif pma_orientation == 90:
-							CONNECT_RIGHT = null
-							return
-						elif pma_orientation == 180:
-							CONNECT_RIGHT.x += rotated_offset.x*0.97
-							CONNECT_RIGHT.y -= rotated_offset.y
-						elif pma_orientation == 270:
-							CONNECT_RIGHT = null
-							return
-					elif module_orientation == 270:
-						if pma_orientation == 0:
-							CONNECT_RIGHT = null
-							return
-						elif pma_orientation == 90:
-							CONNECT_RIGHT.x += rotated_offset.x
-							CONNECT_RIGHT.y -= rotated_offset.y*1.03
-						elif pma_orientation == 180:
-							CONNECT_RIGHT = null
-							return
-						elif pma_orientation == 270:
-							CONNECT_RIGHT.x += rotated_offset.x
-							CONNECT_RIGHT.y += rotated_offset.y*0.97
-				elif area.get_parent().name == "CollaborationModule":
-					if module_orientation == 0:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 90:
-								CONNECT_RIGHT.x += rotated_offset.x*0.22
-								CONNECT_RIGHT.y -= rotated_offset.y*3.7
-							elif pma_orientation == 270:
-								CONNECT_RIGHT.x += rotated_offset.x*0.22
-								CONNECT_RIGHT.y -= rotated_offset.y*3.7
-						elif area.name == "ConnectLeft" or area.name == "ConnectRight":
-							if pma_orientation == 0:
-								CONNECT_RIGHT.x += rotated_offset.x*1.08
-								CONNECT_RIGHT.y -= rotated_offset.y
-							elif pma_orientation == 180:
-								CONNECT_RIGHT.x -= rotated_offset.x*1.11
-								CONNECT_RIGHT.y += rotated_offset.y
-					elif module_orientation == 90:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 0:
-								CONNECT_RIGHT.x -= rotated_offset.x*3.7
-								CONNECT_RIGHT.y += rotated_offset.y*0.21
-							elif pma_orientation == 180:
-								CONNECT_RIGHT.x -= rotated_offset.x*3.7
-								CONNECT_RIGHT.y += rotated_offset.y*0.21
-						elif area.name == "ConnectLeft" or area.name == "ConnectRight":
-							if pma_orientation == 90:
-								CONNECT_RIGHT.x += rotated_offset.x*2
-								CONNECT_RIGHT.y += rotated_offset.y*1.1
-							elif pma_orientation == 270:
-								CONNECT_RIGHT.x += rotated_offset.x*2
-								CONNECT_RIGHT.y -= rotated_offset.y*1.1
-					elif module_orientation == 180:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 90:
-								CONNECT_RIGHT.x += rotated_offset.x*0.21
-								CONNECT_RIGHT.y -= rotated_offset.y*3.7
-							elif pma_orientation == 270:
-								CONNECT_RIGHT.x += rotated_offset.x*0.21
-								CONNECT_RIGHT.y -= rotated_offset.y*3.7
-						elif area.name == "ConnectLeft" or area.name == "ConnectRight":
-							if pma_orientation == 0:
-								CONNECT_RIGHT.x -= rotated_offset.x*1.1
-								CONNECT_RIGHT.y += rotated_offset.y
-							elif pma_orientation == 180:
-								CONNECT_RIGHT.x += rotated_offset.x*1.1
-								CONNECT_RIGHT.y += rotated_offset.y
-					elif module_orientation == 270:
-						if area.name == "ConnectTop" or area.name == "ConnectBottom":
-							if pma_orientation == 0:
-								CONNECT_RIGHT.x -= rotated_offset.x*3.65
-								CONNECT_RIGHT.y += rotated_offset.y*0.21
-							elif pma_orientation == 180:
-								CONNECT_RIGHT.x -= rotated_offset.x*3.65
-								CONNECT_RIGHT.y += rotated_offset.y*0.21
-						elif area.name == "ConnectRight" or area.name == "ConnectLeft":
-							if pma_orientation == 90:
-								CONNECT_RIGHT.x -= rotated_offset.x
-								CONNECT_RIGHT.y -= rotated_offset.y*1.11
-							elif pma_orientation == 270:
-								CONNECT_RIGHT.x -= rotated_offset.x
-								CONNECT_RIGHT.y += rotated_offset.y*1.09
+					# Rotate the local offset based on the PMA's rotation
+					var rotated_offset = local_offset.rotated(deg_to_rad(pma_orientation))
+					print(pma_orientation)
+					if pma_orientation == 0:
+						CONNECT_RIGHT.y += 0
+						CONNECT_RIGHT.x -= 92
+					elif pma_orientation == 90:
+						CONNECT_RIGHT.y -= 92
+						CONNECT_RIGHT.x += 0
+					elif pma_orientation == 180:
+						CONNECT_RIGHT.y += 1
+						CONNECT_RIGHT.x -= 92
+					elif pma_orientation == 270:
+						CONNECT_RIGHT.y += 92
+						CONNECT_RIGHT.x += 0
+					print("right")
+					return
+				return
 
 
 func _physics_process(delta: float) -> void:

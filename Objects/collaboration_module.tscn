@@ -28,17 +28,16 @@ autostart = true
 position = Vector2(-0.5, 0)
 shape = SubResource("RectangleShape2D_84xqh")
 
-[node name="ConnectLeft" type="Area2D" parent="."]
-position = Vector2(-78, 0)
+[node name="ConnectRight" type="Area2D" parent="."]
+position = Vector2(76, 0)
 collision_layer = 2
 collision_mask = 2
 
-[node name="ConnectBox" type="CollisionShape2D" parent="ConnectLeft"]
-position = Vector2(1.05653, -0.0250378)
+[node name="ConnectBox" type="CollisionShape2D" parent="ConnectRight"]
 shape = SubResource("RectangleShape2D_kn15o")
 debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
 
-[node name="SnapBall" type="TextureRect" parent="ConnectLeft"]
+[node name="SnapBall" type="TextureRect" parent="ConnectRight"]
 visible = false
 z_index = -1
 anchors_preset = 15
@@ -53,12 +52,12 @@ grow_vertical = 2
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_qbjla")
 
-[node name="ConnectRight" type="Area2D" parent="."]
-position = Vector2(77, 0)
+[node name="ConnectLeft" type="Area2D" parent="."]
+position = Vector2(-76, 0)
 collision_layer = 2
 collision_mask = 2
 
-[node name="SnapBall" type="TextureRect" parent="ConnectRight"]
+[node name="SnapBall" type="TextureRect" parent="ConnectLeft"]
 visible = false
 z_index = -1
 anchors_preset = 15
@@ -73,13 +72,12 @@ grow_vertical = 2
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_qbjla")
 
-[node name="ConnectBox2" type="CollisionShape2D" parent="ConnectRight"]
-position = Vector2(-0.371002, 0.0957928)
+[node name="ConnectBox2" type="CollisionShape2D" parent="ConnectLeft"]
 shape = SubResource("RectangleShape2D_kn15o")
 debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
 
 [node name="ConnectTop" type="Area2D" parent="."]
-position = Vector2(19, -46)
+position = Vector2(20, -46)
 collision_layer = 2
 collision_mask = 2
 
@@ -99,12 +97,11 @@ scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_qbjla")
 
 [node name="ConnectBox2" type="CollisionShape2D" parent="ConnectTop"]
-position = Vector2(-0.371002, 0.0957928)
 shape = SubResource("RectangleShape2D_kn15o")
 debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
 
 [node name="ConnectBottom" type="Area2D" parent="."]
-position = Vector2(19, 46)
+position = Vector2(20, 46)
 collision_layer = 2
 collision_mask = 2
 
@@ -124,11 +121,11 @@ scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_qbjla")
 
 [node name="ConnectBox2" type="CollisionShape2D" parent="ConnectBottom"]
-position = Vector2(-0.371002, 0.0957928)
 shape = SubResource("RectangleShape2D_kn15o")
 debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
 
 [connection signal="timeout" from="StationModule/updateTimer" to="StationModule" method="_on_update_timer_timeout"]
-[connection signal="area_entered" from="ConnectLeft" to="StationModule" method="_on_connect_left_area_entered"]
 [connection signal="area_entered" from="ConnectRight" to="StationModule" method="_on_connect_right_area_entered"]
+[connection signal="area_entered" from="ConnectLeft" to="StationModule" method="_on_connect_left_area_entered"]
 [connection signal="area_entered" from="ConnectTop" to="StationModule" method="_on_connect_top_area_entered"]
+[connection signal="area_entered" from="ConnectBottom" to="StationModule" method="_on_connect_bottom_area_entered"]

@@ -27,17 +27,16 @@ autostart = true
 [node name="hitBox" type="CollisionShape2D" parent="CollisionHolder"]
 shape = SubResource("RectangleShape2D_lkvb4")
 
-[node name="ConnectLeft" type="Area2D" parent="."]
-position = Vector2(-97.483, 0)
+[node name="ConnectRight" type="Area2D" parent="."]
+position = Vector2(93.5922, 0)
 collision_layer = 2
 collision_mask = 2
 
-[node name="ConnectBox" type="CollisionShape2D" parent="ConnectLeft"]
-position = Vector2(1.05653, -0.0250378)
+[node name="ConnectBox" type="CollisionShape2D" parent="ConnectRight"]
 shape = SubResource("RectangleShape2D_kchsg")
 debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
 
-[node name="SnapBall" type="TextureRect" parent="ConnectLeft"]
+[node name="SnapBall" type="TextureRect" parent="ConnectRight"]
 visible = false
 z_index = -1
 anchors_preset = 15
@@ -52,12 +51,12 @@ grow_vertical = 2
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_2ejfj")
 
-[node name="ConnectRight" type="Area2D" parent="."]
-position = Vector2(91.222, 0)
+[node name="ConnectLeft" type="Area2D" parent="."]
+position = Vector2(-98.7553, 0)
 collision_layer = 2
 collision_mask = 2
 
-[node name="SnapBall" type="TextureRect" parent="ConnectRight"]
+[node name="SnapBall" type="TextureRect" parent="ConnectLeft"]
 visible = false
 z_index = -1
 anchors_preset = 15
@@ -72,11 +71,10 @@ grow_vertical = 2
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_2ejfj")
 
-[node name="ConnectBox2" type="CollisionShape2D" parent="ConnectRight"]
-position = Vector2(-0.371002, 0.0957928)
+[node name="ConnectBox2" type="CollisionShape2D" parent="ConnectLeft"]
 shape = SubResource("RectangleShape2D_kchsg")
 debug_color = Color(0.947184, 4.52429e-06, 0.58429, 0.42)
 
 [connection signal="timeout" from="StationModule/updateTimer" to="StationModule" method="_on_update_timer_timeout"]
-[connection signal="area_entered" from="ConnectLeft" to="StationModule" method="_on_connect_left_area_entered"]
 [connection signal="area_entered" from="ConnectRight" to="StationModule" method="_on_connect_right_area_entered"]
+[connection signal="area_entered" from="ConnectLeft" to="StationModule" method="_on_connect_left_area_entered"]
