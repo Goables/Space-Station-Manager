@@ -11,6 +11,10 @@ size = Vector2(139, 80)
 size = Vector2(1.04835, 1.7818)
 
 [node name="CollaborationModule" type="Node2D"]
+metadata/RightConnect = false
+metadata/TopConnect = false
+metadata/BottomConnect = false
+metadata/LeftConnect = false
 
 [node name="StationModule" type="Sprite2D" parent="."]
 texture = ExtResource("1_d5nxv")

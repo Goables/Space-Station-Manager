@@ -134,10 +134,124 @@ func can_connect_to_module(node_name: String) -> bool:
 		if node_name.begins_with(forbidden_node):
 			return false
 	return true
+	
+func can_dock_to_module(area, source) -> bool:
+	var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
+	var module_orientation = fmod(area.get_parent().rotation_degrees, 360.0)
+	print("PMA Orientation: ", pma_orientation)
+	print("Module Orientation: ", module_orientation)
+	
+	if connected_modules[source]:
+		return false
+	
+	if source == "left" and self.get_parent().get_meta("LeftConnect") == false and area.name == "ConnectRight" and area.get_parent().get_meta("RightConnect") == false:
+		pass
+	elif source == "right" and self.get_parent().get_meta("RightConnect") == false and area.name == "ConnectLeft" and area.get_parent().get_meta("LeftConnect") == false:
+		pass
+	elif source == "top" and self.get_parent().get_meta("TopConnect") == false and area.name == "ConnectBottom" and area.get_parent().get_meta("BottomConnect") == false:
+		pass
+	elif source == "bottom" and self.get_parent().get_meta("BottomConnect") == false and area.name == "ConnectTop" and area.get_parent().get_meta("TopConnect") == false:
+		pass
+	else:
+		print("sorry, all were full")
+		return false
+	
+	if not area.get_parent().name == "CollaborationModule":
+		return true
+	# Restriction for "Left" connector
+	if source == "left" and connected_modules["left"] == null:
+		if area.name == "ConnectLeft":
+			# Bottom can only connect to left when left is at 180 degrees
+			if module_orientation + 180 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectRight":
+			# Bottom can only connect to right when right is at 0 degrees
+			if module_orientation + 0 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectTop":
+			# Bottom can only connect to top when top is at 90 degrees
+			if module_orientation + 270 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectBottom":
+			# Bottom can only connect to bottom when down is at 270 degrees
+			if module_orientation + 90 == pma_orientation:
+				return true
+			return false
+	# Restriction for "Right" connector
+	if source == "right" and connected_modules["right"] == null:
+		if area.name == "ConnectLeft":
+			# Bottom can only connect to left when left is at 180 degrees
+			if module_orientation + 0 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectRight":
+			# Bottom can only connect to right when right is at 0 degrees
+			if module_orientation + 180 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectTop":
+			# Bottom can only connect to top when top is at 90 degrees
+			if module_orientation + 90 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectBottom":
+			# Bottom can only connect to bottom when down is at 270 degrees
+			if module_orientation + 270 == pma_orientation:
+				return true
+			return false
+	# Restriction for "Top" connector
+	if source == "top" and connected_modules["top"] == null:
+		if area.name == "ConnectLeft":
+			# Bottom can only connect to left when left is at 180 degrees
+			if module_orientation + 90 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectRight":
+			# Bottom can only connect to right when right is at 0 degrees
+			if module_orientation + 270 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectTop":
+			# Bottom can only connect to top when top is at 90 degrees
+			if module_orientation + 180 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectBottom":
+			# Bottom can only connect to bottom when down is at 270 degrees
+			if module_orientation + 0 == pma_orientation:
+				return true
+			return false
+	# Restriction for "Bottom" connector
+	if source == "bottom" and connected_modules["bottom"] == null:
+		if area.name == "ConnectLeft":
+			# Bottom can only connect to left when left is at 180 degrees
+			if module_orientation +270 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectRight":
+			# Bottom can only connect to right when right is at 0 degrees
+			if module_orientation + 90 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectTop":
+			# Bottom can only connect to top when top is at 90 degrees
+			if module_orientation + 0 == pma_orientation:
+				return true
+			return false
+		if area.name == "ConnectBottom":
+			# Bottom can only connect to bottom when down is at 270 degrees
+			if module_orientation + 180 == pma_orientation:
+				return true
+			return false
+	return false
+
 
 func _on_connect_left_area_entered(area):
 	if self.get_parent() == Global.ITEM_HELD:
-		if can_connect_to_module(area.get_parent().name):
+		if can_connect_to_module(area.get_parent().name) and can_dock_to_module(area, "left"):
 			if holdingShift == true and not isSnapped:
 				# Convert positions to world space
 				var parent_position = self.get_parent().global_position
@@ -145,6 +259,8 @@ func _on_connect_left_area_entered(area):
 				CONNECT_LEFT = area.global_position
 				#CONNECT_RIGHT += area.get_parent()
 				connected_modules["left"] = area.get_parent()
+				self.get_parent().set_meta("LeftConnect", true)
+				area.get_parent().set_meta("RightConnect", true)
 
 				# Get the PMA and module orientations
 				var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
@@ -173,7 +289,7 @@ func _on_connect_left_area_entered(area):
 
 func _on_connect_right_area_entered(area):
 	if self.get_parent() == Global.ITEM_HELD:
-		if can_connect_to_module(area.get_parent().name):
+		if can_connect_to_module(area.get_parent().name) and can_dock_to_module(area, "right"):
 			if holdingShift == true and not isSnapped:
 				# Convert positions to world space
 				var parent_position = self.get_parent().global_position
@@ -181,6 +297,8 @@ func _on_connect_right_area_entered(area):
 				CONNECT_RIGHT = area.global_position
 				#CONNECT_RIGHT += area.get_parent()
 				connected_modules["right"] = area.get_parent()
+				self.get_parent().set_meta("RightConnect", true)
+				area.get_parent().set_meta("LeftConnect", true)
 
 				# Get the PMA and module orientations
 				var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
@@ -209,7 +327,7 @@ func _on_connect_right_area_entered(area):
 
 func _on_connect_top_area_entered(area):
 	if self.get_parent() == Global.ITEM_HELD:
-		if can_connect_to_module(area.get_parent().name):
+		if can_connect_to_module(area.get_parent().name) and can_dock_to_module(area, "top"):
 			if holdingShift == true and not isSnapped:
 				# Convert positions to world space
 				var parent_position = self.get_parent().global_position
@@ -217,6 +335,8 @@ func _on_connect_top_area_entered(area):
 				CONNECT_TOP = area.global_position
 				#CONNECT_RIGHT += area.get_parent()
 				connected_modules["top"] = area.get_parent()
+				self.get_parent().set_meta("TopConnect", true)
+				area.get_parent().set_meta("BottomConnect", true)
 
 				# Get the PMA and module orientations
 				var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
@@ -245,7 +365,7 @@ func _on_connect_top_area_entered(area):
 
 func _on_connect_bottom_area_entered(area):
 	if self.get_parent() == Global.ITEM_HELD:
-		if can_connect_to_module(area.get_parent().name):
+		if can_connect_to_module(area.get_parent().name) and can_dock_to_module(area, "bottom"):
 			if holdingShift == true and not isSnapped:
 				# Convert positions to world space
 				var parent_position = self.get_parent().global_position
@@ -253,6 +373,8 @@ func _on_connect_bottom_area_entered(area):
 				CONNECT_BOTTOM = area.global_position
 				#CONNECT_RIGHT += area.get_parent()
 				connected_modules["bottom"] = area.get_parent()
+				self.get_parent().set_meta("BottomConnect", true)
+				area.get_parent().set_meta("TopConnect", true)
 
 				# Get the PMA and module orientations
 				var pma_orientation = fmod(self.get_parent().rotation_degrees, 360.0)
@@ -282,6 +404,14 @@ func _on_connect_bottom_area_entered(area):
 # TRY JUST SETTING POSITION BASED ON PMA ORIENTATION, THEN NEST CHECKS FOR AREA NAME
 
 func _physics_process(delta: float) -> void:
+	if self.get_parent().get_meta("LeftConnect") == false:
+		connected_modules["left"] = null
+	elif self.get_parent().get_meta("RightConnect") == false:
+		connected_modules["right"] = null
+	elif self.get_parent().get_meta("TopConnect") == false:
+		connected_modules["top"] = null
+	elif self.get_parent().get_meta("BottomConnect") == false:
+		connected_modules["bottom"] = null
 	if IS_MOVING:
 		getallnodes(get_node("/root/Gameplay"))
 		rightSnapBall.visible = true
@@ -316,9 +446,21 @@ func _physics_process(delta: float) -> void:
 func custom_disconnect(direction: String) -> void:
 	if connected_modules[direction]:
 		var disconnected_module = connected_modules[direction]
-		connected_modules[direction] = null
 		reset_snap_variables()  # Reset snap variables when disconnected
 		isSnapped = false
+		if direction == "left":
+			self.get_parent().set_meta("LeftConnect", false)
+			disconnected_module.set_meta("RightConnect", false)
+		elif direction == "right":
+			self.get_parent().set_meta("RightConnect", false)
+			disconnected_module.set_meta("LeftConnect", false)
+		elif direction == "top":
+			self.get_parent().set_meta("BottomConnect", false)
+			disconnected_module.set_meta("TopConnect", false)
+		elif direction == "bottom":
+			self.get_parent().set_meta("TopConnect", false)
+			disconnected_module.set_meta("BottomConnect", false)
+		connected_modules[direction] = null
 
 func takeDamage(area: Node) -> void:
 	currentIntegrity -= 5

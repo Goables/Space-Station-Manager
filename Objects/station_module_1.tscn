@@ -11,6 +11,8 @@ size = Vector2(176, 80)
 size = Vector2(1.04835, 1.7818)
 
 [node name="PioneerModule1" type="Node2D"]
+metadata/LeftConnect = false
+metadata/RightConnect = false
 
 [node name="StationModule" type="Sprite2D" parent="."]
 texture = ExtResource("1_6xu8x")
